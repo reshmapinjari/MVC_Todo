@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Todo.Models;
 using MVC_Todo.Services;
+using MVC_Todo.Data;
 
 namespace Todo_Mvc.Controllers
 {
@@ -26,6 +27,39 @@ namespace Todo_Mvc.Controllers
             };
             return View(model);
 
+        }
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddItem(TodoItem newItem)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var successful = await _todoItemService.AddItemAsync(newItem);
+            if (!successful)
+            {
+                return BadRequest("Could not add item.");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkDone(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var successful = await _todoItemService.MarkDoneAsync(id);
+            if (!successful)
+            {
+                return BadRequest("Could not mark item as done.");
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }
