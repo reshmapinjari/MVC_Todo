@@ -35,9 +35,13 @@ namespace MVC_Todo
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.AddSingleton<ITodoItemService, FakeTodoItemService>();
+          
          
             _ = services.AddMvc();
+            services.AddDbContext<ApplicationDbContext>(options =>
+          options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<ITodoItemService, TodoItemService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
